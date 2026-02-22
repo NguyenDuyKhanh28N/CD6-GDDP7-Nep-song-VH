@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Tập GDĐP Lớp 7 - Vĩnh Long (Chủ đề 6)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Animation */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .option-card {
+            transition: all 0.2s ease;
+            border-width: 2px;
+        }
+
+        .option-card:hover:not(:disabled) {
+            transform: translateY(-2px);
+            border-color: #3b82f6;
+            background-color: #f0f9ff;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .correct-style {
+            background-color: #dcfce7 !important; 
+            border-color: #16a34a !important;      
+            color: #14532d !important;             
+        }
+        
+        .wrong-style {
+            background-color: #fee2e2 !important; 
+            border-color: #dc2626 !important;     
+            color: #7f1d1d !important;            
+        }
+
+        /* Tối ưu nhãn A, B, C, D cho mobile */
+        .label-box {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 2px solid #cbd5e1; 
+            color: #1e293b;            
+            font-weight: 800;          
+            font-size: 1rem;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-card:hover:not(:disabled) .label-box {
+            border-color: #3b82f6;
+            color: #2563eb;
+        }
+
+        .correct-style .label-box {
+            background-color: #16a34a;
+            border-color: #16a34a;
+            color: white;
+        }
+
+        .wrong-style .label-box {
+            background-color: #dc2626;
+            border-color: #dc2626;
+            color: white;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-3 md:p-4 font-sans text-gray-800">
+
+    <div class="w-full max-w-4xl glass-panel rounded-2xl md:rounded-3xl overflow-hidden flex flex-col md:min-h-[600px] relative">
+        
+        <!-- Header -->
+        <header class="bg-white/60 border-b border-gray-200 p-3 md:p-5 flex justify-between items-center sticky top-0 z-20">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl md:rounded-2xl flex items-center justify-center text-white shadow-lg transform rotate-3">
+                    <i class="fa-solid fa-book-open text-lg md:text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-base md:text-xl font-black text-gray-800 tracking-tight">ÔN TẬP GDĐP LỚP 7</h1>
+                    <p class="text-xs md:text-sm text-gray-500 font-bold">Vĩnh Long - Chủ đề 6</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-end">
+                <div class="flex items-center gap-2 text-brand-700 bg-blue-50 px-3 py-1 md:py-1.5 rounded-full border border-blue-100 shadow-sm">
+                    <i class="fa-solid fa-layer-group text-sm"></i>
+                    <span class="font-bold text-sm md:text-lg" id="question-index">1/26</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 h-1.5 md:h-2">
+            <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-r-full transition-all duration-500 ease-out shadow-[0_0_10px_rgba(59,130,246,0.5)]" style="width: 0%"></div>
+        </div>
+
+        <!-- Content Area -->
+        <main class="flex-grow p-4 md:p-8 flex flex-col relative z-10 overflow-y-auto" id="quiz-area">
+            <!-- Question Text -->
+            <div class="mb-5 md:mb-8 fade-in">
+                <span class="inline-block px-2 py-1 rounded bg-indigo-100 text-indigo-800 text-[10px] md:text-xs font-black tracking-wider mb-2 uppercase">Câu hỏi</span>
+                <h2 id="question-text" class="text-base md:text-xl font-bold text-gray-800 leading-relaxed">
+                    Đang tải câu hỏi...
+                </h2>
+                <div id="feedback-msg" class="h-5 md:h-6 mt-1 md:mt-2 text-sm md:text-base font-bold transition-all duration-300 opacity-0"></div>
+            </div>
+
+            <!-- Answers Grid -->
+            <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 fade-in" style="animation-delay: 0.1s;">
+                <!-- Options will be injected here -->
+            </div>
+
+            <!-- Khung Giải thích (Ẩn mặc định, hiện khi trả lời sai) -->
+            <div id="explanation-box" class="hidden mt-5 p-4 bg-amber-50 border-2 border-amber-200 rounded-xl shadow-sm fade-in">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-amber-200 flex flex-shrink-0 items-center justify-center text-amber-600">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-amber-800 text-sm md:text-base mb-1">Giải thích đáp án:</h4>
+                        <p id="explanation-text" class="text-sm md:text-base text-amber-900 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Navigation -->
+        <footer class="bg-gray-50/80 p-3 md:p-5 border-t border-gray-200 flex justify-between items-center backdrop-blur-sm mt-auto">
+            <button id="prev-btn" class="flex items-center gap-1 md:gap-2 px-3 py-2 md:px-6 md:py-3 text-sm md:text-base text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+                <i class="fa-solid fa-arrow-left"></i> <span class="hidden md:inline">Quay lại</span>
+            </button>
+
+            <!-- Điểm số hiện tại -->
+            <div class="flex items-center gap-2 bg-white px-3 py-1.5 md:px-5 md:py-2 rounded-full shadow-sm border border-gray-200">
+                <span class="text-gray-500 text-xs md:text-sm font-bold uppercase">Điểm:</span>
+                <span id="current-score" class="text-brand-600 font-black text-base md:text-xl">0</span>
+            </div>
+
+            <button id="next-btn" class="flex items-center gap-2 md:gap-3 px-4 py-2 md:px-8 md:py-3 bg-brand-600 text-white text-sm md:text-base font-bold rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 hover:shadow-brand-500/50 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:shadow-none disabled:translate-y-0 disabled:cursor-not-allowed" disabled>
+                <span id="next-text">Câu tiếp</span> <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </footer>
+
+    </div>
+
+    <!-- Modal Kết Quả -->
+    <div id="result-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-500">
+        <div class="bg-white rounded-[2rem] shadow-2xl p-6 md:p-8 max-w-md w-full text-center transform scale-90 transition-all duration-300 border-4 border-white">
+            <div class="w-20 h-20 md:w-24 md:h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-yellow-500 text-4xl md:text-5xl shadow-inner animate-bounce">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <h2 id="modal-title" class="text-2xl md:text-3xl font-black text-gray-800 mb-2">Hoàn Thành!</h2>
+            <p class="text-sm md:text-base text-gray-500 font-medium mb-6 md:mb-8">Bạn đã xuất sắc hoàn thành bài ôn tập.</p>
+            
+            <div class="bg-gradient-to-r from-brand-50 to-indigo-50 rounded-2xl p-4 md:p-6 mb-6 md:mb-8 border border-brand-100">
+                <div class="text-[10px] md:text-xs text-brand-600 font-bold uppercase tracking-widest mb-1 md:mb-2">Tổng điểm của bạn</div>
+                <div class="text-5xl md:text-6xl font-black text-brand-600 tracking-tighter" id="score-display">0/26</div>
+            </div>
+
+            <button id="restart-quiz-btn" class="w-full py-3 md:py-4 bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-bold text-base md:text-lg rounded-xl shadow-xl shadow-brand-500/40 hover:scale-[1.02] transition-transform">
+                <i class="fa-solid fa-rotate-right mr-2"></i> Làm Lại Từ Đầu
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- DỮ LIỆU CÂU HỎI & GIẢI THÍCH (26 CÂU) ---
+        const questions = [
+            { question: "Theo tài liệu, nếp sống văn hoá là những thói quen, những hành vi ứng xử của con người đối với:", options: ["Chỉ với bản thân và gia đình.", "Thiên nhiên, xã hội và cộng đồng.", "Môi trường học tập và nơi làm việc.", "Bạn bè và thầy cô giáo."], correctAnswer: "Thiên nhiên, xã hội và cộng đồng.", explanation: "Nếp sống văn hoá là những thói quen, hành vi ứng xử của con người đối với thiên nhiên, xã hội và cộng đồng theo các chuẩn mực giá trị văn hoá." },
+            { question: "Mục đích của việc thực hiện các chuẩn mực giá trị của văn hoá nhằm:", options: ["Giúp con người trở nên nổi tiếng.", "Làm cho cuộc sống cá nhân giàu có hơn.", "Góp phần xây dựng xã hội trở nên văn minh và tiến bộ.", "Thu hút khách du lịch đến với địa phương."], correctAnswer: "Góp phần xây dựng xã hội trở nên văn minh và tiến bộ.", explanation: "Việc thực hiện các chuẩn mực giá trị văn hóa nhằm mục đích cao nhất là góp phần xây dựng xã hội trở nên văn minh và tiến bộ (trang 39)." },
+            { question: "Năm 2008, ngành Giáo dục và Đào tạo Vĩnh Long đã phát động phong trào thi đua nào ở tất cả các trường học?", options: ["Xây dựng trường học xanh – sạch – đẹp.", "Trường học thân thiện – Học sinh tích cực.", "Ngày chủ nhật xanh.", "Công trình măng non."], correctAnswer: "Trường học thân thiện – Học sinh tích cực.", explanation: "Từ năm 2008, ngành Giáo dục và Đào tạo Vĩnh Long phát động phong trào thi đua xây dựng 'Trường học thân thiện - Học sinh tích cực'." },
+            { question: "Các phong trào như 'Tuổi nhỏ làm việc nhỏ', 'Nghìn việc tốt' mang lại ý nghĩa gì cho học sinh?", options: ["Giúp học sinh kiếm được nhiều tiền.", "Giáo dục tinh thần đoàn kết, tương thân tương ái.", "Giúp học sinh được nghỉ học nhiều hơn.", "Giúp học sinh không phải làm việc nhà."], correctAnswer: "Giáo dục tinh thần đoàn kết, tương thân tương ái.", explanation: "Qua các phong trào này đã giáo dục học sinh tinh thần đoàn kết, tương thân tương ái, giúp đỡ lẫn nhau." },
+            { question: "Nếp sống văn hoá của mỗi người được biểu hiện cụ thể ở mấy khía cạnh chính trong tài liệu?", options: ["2 khía cạnh (cá nhân, gia đình).", "3 khía cạnh (cá nhân, gia đình, xã hội).", "4 khía cạnh (cá nhân, gia đình, nhà trường, xã hội).", "5 khía cạnh."], correctAnswer: "3 khía cạnh (cá nhân, gia đình, xã hội).", explanation: "Tài liệu chia biểu hiện nếp sống văn hoá làm 3 mặt chính: nếp sống cá nhân, nếp sống gia đình và nếp sống xã hội (trang 40)." },
+            { question: "Hành động nào dưới đây là biểu hiện nếp sống văn hoá của CÁ NHÂN?", options: ["Vâng lời ông bà cha mẹ.", "Tôn trọng luật pháp.", "Có lối sống lành mạnh, sạch sẽ, ngăn nắp.", "Xây dựng cảnh quan an toàn, sạch đẹp."], correctAnswer: "Có lối sống lành mạnh, sạch sẽ, ngăn nắp.", explanation: "Nếp sống cá nhân thể hiện ở chỗ: có lối sống lành mạnh, sạch sẽ, ngăn nắp; trau dồi kiến thức, rèn luyện đạo đức..." },
+            { question: "Biểu hiện nào sau đây thuộc về nếp sống văn hoá trong GIA ĐÌNH?", options: ["Tôn trọng các quy tắc, trật tự công cộng.", "Yêu thương, chăm sóc lẫn nhau, con cháu hiếu thảo ngoan hiền.", "Luôn trau dồi kiến thức, rèn luyện đạo đức.", "Tôn trọng tự nhiên, bảo vệ môi trường."], correctAnswer: "Yêu thương, chăm sóc lẫn nhau, con cháu hiếu thảo ngoan hiền.", explanation: "Nếp sống gia đình biểu hiện ở việc xây dựng mối quan hệ thuận hòa, yêu thương, hiếu thảo, đoàn kết xóm làng." },
+            { question: "Nội dung nào sau đây phản ánh nếp sống văn hoá ngoài XÃ HỘI?", options: ["Rèn luyện nhân cách trong giao tiếp.", "Tìm hiểu và tôn trọng những quy định của pháp luật.", "Đoàn kết, tương thân tương ái trong nhà.", "Sắp xếp bàn học tập gọn gàng."], correctAnswer: "Tìm hiểu và tôn trọng những quy định của pháp luật.", explanation: "Nếp sống xã hội yêu cầu mỗi cá nhân phải tìm hiểu, tôn trọng pháp luật, quy tắc trật tự công cộng." },
+            { question: "Hành vi nào dưới đây CHƯA thể hiện nếp sống văn hoá?", options: ["Trồng cây xanh khuôn viên trường.", "Lễ phép, kính trọng, chào hỏi đúng phép tắc.", "Mất trật tự trong lớp học, vứt rác bừa bãi.", "Giữ gìn an ninh trật tự."], correctAnswer: "Mất trật tự trong lớp học, vứt rác bừa bãi.", explanation: "Mất trật tự và vứt rác bừa bãi là những hành vi vi phạm nội quy, làm xấu môi trường, chưa thể hiện nếp sống văn hóa." },
+            { question: "Hành vi nào sau đây là biểu hiện của học sinh có nếp sống văn hoá ở trường học?", options: ["Đánh nhau gây gổ với bạn bè.", "Không xếp hàng, ra vào lớp không đúng giờ.", "Không mặc đồng phục theo quy định.", "Học bài và làm bài đầy đủ, bàn học gọn gàng."], correctAnswer: "Học bài và làm bài đầy đủ, bàn học gọn gàng.", explanation: "Học và làm bài đầy đủ, giữ gọn gàng ngăn nắp là chuẩn mực đạo đức, tác phong của học sinh có văn hoá." },
+            { question: "Hình ảnh 'Siêu thị sẻ chia' của Liên đội trường THCS Thành Đông (huyện Bình Tân) là biểu hiện của:", options: ["Tinh thần tương thân tương ái, giúp đỡ lẫn nhau.", "Tinh thần bảo vệ cảnh quan thiên nhiên.", "Ý thức chấp hành luật an toàn giao thông.", "Thói quen giữ gìn vệ sinh cá nhân."], correctAnswer: "Tinh thần tương thân tương ái, giúp đỡ lẫn nhau.", explanation: "Mô hình 'Siêu thị sẻ chia' mang ý nghĩa nhân văn, san sẻ khó khăn với các bạn học sinh nghèo, thể hiện sự tương thân tương ái." },
+            { question: "Phong trào xây dựng người tốt, việc tốt ở tỉnh Vĩnh Long nhằm mục đích gì?", options: ["Giúp nhau thoát nghèo, lan toả các giá trị tốt đẹp của cuộc sống.", "Đánh giá xếp loại thi đua.", "Tìm kiếm nhân tài.", "Xây dựng các khu công nghiệp mới."], correctAnswer: "Giúp nhau thoát nghèo, lan toả các giá trị tốt đẹp của cuộc sống.", explanation: "Tỉnh Vĩnh Long phát động phong trào này nhằm phát huy truyền thống đoàn kết, giúp nhau thoát nghèo, lan tỏa giá trị tốt đẹp." },
+            { question: "Phong trào bảo vệ môi trường, ứng phó với biến đổi khí hậu ở Vĩnh Long hướng tới xây dựng cảnh quan môi trường như thế nào?", options: ["Hiện đại - Văn minh - Công nghiệp.", "Sáng - Xanh - Sạch - Đẹp.", "To lớn - Rộng rãi - Đẹp đẽ.", "Xanh - Mát - Lành - Mạnh."], correctAnswer: "Sáng - Xanh - Sạch - Đẹp.", explanation: "Tài liệu ghi rõ mục tiêu là 'xây dựng cảnh quan môi trường sáng, xanh, sạch, đẹp' (trang 42)." },
+            { question: "Mô hình 'Ngày chủ nhật xanh' được nhắc đến trong tài liệu là của đơn vị nào?", options: ["Xã đoàn Tân Hạnh.", "Huyện Mang Thít.", "Thị xã Bình Minh.", "Huyện Trà Ôn."], correctAnswer: "Xã đoàn Tân Hạnh.", explanation: "Theo trang 42, mô hình 'Ngày chủ nhật xanh' do xã đoàn Tân Hạnh thực hiện." },
+            { question: "Mô hình nào sau đây là một trong những sáng kiến nổi bật ở Vĩnh Long trong việc làm đẹp cảnh quan đường phố?", options: ["Tuyến đường bê tông hoá.", "Tuyến đường Cột điện nở hoa.", "Tuyến đường rợp bóng cờ bay.", "Tuyến đường camera an ninh."], correctAnswer: "Tuyến đường Cột điện nở hoa.", explanation: "Mô hình tuyến đường 'Cột điện nở hoa' tại xã Tân Hạnh và TP Vĩnh Long là điểm nhấn làm đẹp cảnh quan." },
+            { question: "Việc kịp thời biểu dương khen thưởng các cá nhân, tập thể điển hình tiên tiến mang lại tác dụng gì?", options: ["Tạo nên phong trào thi đua, nâng cao chất lượng của phong trào.", "Giúp các cá nhân đó được nhận nhiều tiền thưởng.", "Để các địa phương khác ghen tị.", "Để hoàn thành báo cáo cuối năm."], correctAnswer: "Tạo nên phong trào thi đua, nâng cao chất lượng của phong trào.", explanation: "Khen thưởng kịp thời giúp động viên, nhân rộng các điển hình tiên tiến, tạo phong trào thi đua và nâng cao chất lượng." },
+            { question: "Các mô hình như 'Tuyến đường thanh niên tự quản sáng - xanh - sạch - đẹp' đã được triển khai ở đâu?", options: ["Chỉ ở Thành phố Vĩnh Long.", "Ở nhiều huyện, thị xã, thành phố trong tỉnh.", "Chỉ ở các khu du lịch của tỉnh.", "Chỉ ở các trường học trong tỉnh."], correctAnswer: "Ở nhiều huyện, thị xã, thành phố trong tỉnh.", explanation: "Tỉnh đoàn Vĩnh Long đã triển khai ở nhiều nơi như Thanh Đức (Long Hồ), Phú Thịnh (Tam Bình), phường Đông Thành (Bình Minh)..." },
+            { question: "Hành động nào của người dân thể hiện việc tham gia xây dựng cảnh quan nông thôn mới ở địa phương?", options: ["Chỉ dọn dẹp nhà cửa của gia đình mình.", "Xả rác xuống kênh rạch để làm phân bón.", "Trồng và chăm sóc đường hoa, cây kiểng dọc các tuyến đường.", "Mở loa hát karaoke với âm lượng lớn."], correctAnswer: "Trồng và chăm sóc đường hoa, cây kiểng dọc các tuyến đường.", explanation: "Hội nông dân và các đoàn thể thường xuyên trồng, chăm sóc đường hoa, cây kiểng để xây dựng nông thôn mới." },
+            { question: "Trách nhiệm của mỗi học sinh trong giao tiếp ứng xử với con người là gì?", options: ["Luôn giành phần thắng về mình.", "Trau dồi rèn luyện đạo đức, nhân cách.", "Chỉ giao tiếp với những bạn học giỏi.", "Tránh xa các hoạt động tập thể."], correctAnswer: "Trau dồi rèn luyện đạo đức, nhân cách.", explanation: "Học sinh cần phải luôn trau dồi rèn luyện đạo đức, nhân cách trong giao tiếp ứng xử (trang 44)." },
+            { question: "Để góp phần xây dựng cảnh quan môi trường sáng - xanh - sạch - đẹp ở trường học, học sinh cần làm gì?", options: ["Tham gia các phong trào do đoàn trường tổ chức.", "Nhờ cha mẹ làm thay các công việc vệ sinh.", "Chỉ dọn dẹp khi có thầy cô giáo kiểm tra.", "Thuê người dọn dẹp khuôn viên trường."], correctAnswer: "Tham gia các phong trào do đoàn trường tổ chức.", explanation: "Học sinh cần tích cực tham gia các phong trào vệ sinh, chăm sóc cây xanh do trường, lớp tổ chức." },
+            { question: "Đối với các phong tục tập quán lạc hậu, mê tín dị đoan, học sinh cần có thái độ như thế nào?", options: ["Tích cực tham gia và cổ vũ.", "Đồng thời bài trừ.", "Không quan tâm vì đó là việc của người lớn.", "Giới thiệu cho nhiều bạn bè cùng biết."], correctAnswer: "Đồng thời bài trừ.", explanation: "Bên cạnh việc giữ gìn văn hoá tốt đẹp, học sinh phải có trách nhiệm đồng thời bài trừ phong tục lạc hậu, mê tín dị đoan." },
+            { question: "Đối với các tệ nạn xã hội và biểu hiện tiêu cực trong cuộc sống, trách nhiệm của học sinh là gì?", options: ["Tích cực phòng chống.", "Bao che cho bạn bè nếu họ vi phạm.", "Im lặng để đảm bảo an toàn cho bản thân.", "Thử tham gia để biết."], correctAnswer: "Tích cực phòng chống.", explanation: "Học sinh cần tích cực phòng chống các tệ nạn xã hội và những biểu hiện tiêu cực." },
+            { question: "Khi bác Tổ trưởng kêu gọi dọn vệ sinh chung, chị Ba nói: 'Đó là việc của lao công, chúng ta không cần tham gia'. Suy nghĩ của chị Ba là:", options: ["Đúng, vì đã có người được trả tiền để làm việc đó.", "Đúng, vì học sinh chỉ cần lo học tập.", "Sai, vì bảo vệ môi trường là trách nhiệm chung của cả cộng đồng.", "Sai, vì chị Ba phải làm để được trả tiền công."], correctAnswer: "Sai, vì bảo vệ môi trường là trách nhiệm chung của cả cộng đồng.", explanation: "Giữ gìn vệ sinh khu phố không chỉ là việc của lao công mà là trách nhiệm chung của mọi công dân sống tại đó." },
+            { question: "Nếu là em của chị Ba, em sẽ khuyên chị như thế nào?", options: ["Khuyên chị ở nhà ngủ để giữ gìn sức khoẻ.", "Đồng tình với chị và đóng cửa ở trong nhà.", "Báo với tổ trưởng dân phố để phạt chị.", "Giải thích cho chị hiểu lợi ích chung và rủ chị cùng ra dọn dẹp."], correctAnswer: "Giải thích cho chị hiểu lợi ích chung và rủ chị cùng ra dọn dẹp.", explanation: "Cách ứng xử văn minh nhất là giải thích nhẹ nhàng để chị hiểu trách nhiệm cộng đồng và cùng tham gia." },
+            { question: "Hành động nào sau đây là học sinh thực hiện ĐÚNG nội quy trường lớp?", options: ["Xếp hàng ngay ngắn, trật tự khi ra vào lớp.", "Xả rác dưới gầm bàn sau giờ ăn sáng.", "Viết, vẽ bậy lên mặt bàn học.", "Đùa giỡn, chạy nhảy làm gãy ghế đá của trường."], correctAnswer: "Xếp hàng ngay ngắn, trật tự khi ra vào lớp.", explanation: "Xếp hàng ngay ngắn, trật tự là biểu hiện rõ nhất của việc chấp hành tốt nội quy và nếp sống văn minh học đường." },
+            { question: "Di tích lịch sử, văn hoá tiêu biểu nào của Vĩnh Long được nhắc đến trong hình ảnh phần 'Mục tiêu' ở trang đầu tiên của bài học?", options: ["Khu tưởng niệm Phạm Hùng.", "Văn Thánh Miếu.", "Chùa Tiên Châu.", "Khu du lịch Vinh Sang."], correctAnswer: "Văn Thánh Miếu.", explanation: "Hình 6.1 (trang 37) ghi rõ hình ảnh: 'Học sinh trường THCS Trần Phú viếng Văn Thánh Miếu - Di tích lịch sử, văn hóa tiêu biểu của Vĩnh Long'." }
+        ];
+
+        // --- LOGIC XỬ LÝ ---
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+
+        const questionText = document.getElementById('question-text');
+        const answersContainer = document.getElementById('answers-container');
+        const questionIndexDisplay = document.getElementById('question-index');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const nextText = document.getElementById('next-text');
+        const progressBar = document.getElementById('progress-bar');
+        const resultModal = document.getElementById('result-modal');
+        const currentScoreDisplay = document.getElementById('current-score');
+        const feedbackMsg = document.getElementById('feedback-msg');
+        const quizArea = document.getElementById('quiz-area');
+        const explanationBox = document.getElementById('explanation-box');
+        const explanationText = document.getElementById('explanation-text');
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            questionIndexDisplay.textContent = `${currentQuestionIndex + 1}/${questions.length}`;
+            questionText.textContent = q.question;
+            
+            // Ẩn thông báo và khung giải thích khi load câu mới
+            feedbackMsg.style.opacity = '0';
+            feedbackMsg.textContent = '';
+            explanationBox.classList.add('hidden');
+            
+            // Reset animation
+            quizArea.classList.remove('fade-in');
+            void quizArea.offsetWidth; // Trigger reflow
+            quizArea.classList.add('fade-in');
+
+            answersContainer.innerHTML = '';
+
+            const alreadyAnswered = userAnswers[currentQuestionIndex] !== null;
+
+            q.options.forEach((option, i) => {
+                const button = document.createElement('button');
+                const letter = String.fromCharCode(65 + i);
+                
+                button.innerHTML = `
+                    <div class="flex items-center gap-2 md:gap-3 text-left w-full">
+                        <span class="label-box">${letter}</span>
+                        <span class="flex-grow text-sm md:text-base font-semibold text-gray-700 leading-snug">${option}</span>
+                        <i class="fa-solid fa-circle-check text-xl text-green-600 opacity-0 hidden icon-correct"></i>
+                        <i class="fa-solid fa-circle-xmark text-xl text-red-600 opacity-0 hidden icon-wrong"></i>
+                    </div>
+                `;
+                
+                button.className = 'option-card w-full p-3 md:p-4 rounded-xl md:rounded-2xl bg-white shadow-sm border-gray-200 relative';
+
+                // Nếu đã trả lời trước đó (khi ấn nút Quay lại)
+                if (alreadyAnswered) {
+                    button.disabled = true;
+                    button.classList.add('opacity-80', 'cursor-default'); 
+                    
+                    if (option === q.correctAnswer) {
+                        setButtonState(button, 'correct');
+                        button.classList.remove('opacity-80'); 
+                    } else if (option === userAnswers[currentQuestionIndex]) {
+                        setButtonState(button, 'wrong');
+                        button.classList.remove('opacity-80');
+                    }
+                } else {
+                    button.onclick = () => handleAnswerClick(button, option, q.correctAnswer, q.explanation);
+                }
+
+                answersContainer.appendChild(button);
+            });
+
+            // Nếu đã từng trả lời sai câu này, hiện lại khung giải thích khi xem lại
+            if (alreadyAnswered && userAnswers[currentQuestionIndex] !== q.correctAnswer) {
+                showExplanation(q.explanation);
+            }
+
+            updateNavigationButtons();
+            updateProgressBar();
+        }
+
+        function setButtonState(btn, state) {
+            if (state === 'correct') {
+                btn.classList.add('correct-style');
+                btn.classList.remove('border-gray-200');
+                btn.querySelector('.icon-correct').classList.remove('hidden', 'opacity-0');
+            } else if (state === 'wrong') {
+                btn.classList.add('wrong-style');
+                btn.classList.remove('border-gray-200');
+                btn.querySelector('.icon-wrong').classList.remove('hidden', 'opacity-0');
+            }
+        }
+
+        function handleAnswerClick(selectedBtn, selectedOption, correctOption, explanation) {
+            userAnswers[currentQuestionIndex] = selectedOption;
+            
+            const buttons = answersContainer.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if(btn !== selectedBtn) btn.classList.add('opacity-50');
+            });
+
+            selectedBtn.classList.remove('opacity-50');
+
+            const isCorrect = (selectedOption === correctOption);
+
+            if (isCorrect) {
+                setButtonState(selectedBtn, 'correct');
+                showFeedback(true);
+            } else {
+                setButtonState(selectedBtn, 'wrong');
+                buttons.forEach(btn => {
+                    if (btn.innerText.includes(correctOption)) {
+                        setButtonState(btn, 'correct');
+                        btn.classList.remove('opacity-50'); 
+                        btn.classList.add('animate-pulse');
+                    }
+                });
+                showFeedback(false);
+                // CHỈ HIỆN GIẢI THÍCH KHI TRẢ LỜI SAI (Theo yêu cầu)
+                showExplanation(explanation);
+            }
+
+            updateNavigationButtons();
+            updateProgressBar();
+            updateScore();
+        }
+
+        function showFeedback(isCorrect) {
+            feedbackMsg.style.opacity = '1';
+            if (isCorrect) {
+                feedbackMsg.innerHTML = '<i class="fa-regular fa-face-smile-wink mr-1"></i> Xuất sắc! Bạn đã chọn đúng.';
+                feedbackMsg.className = "h-5 md:h-6 mt-1 md:mt-2 text-sm md:text-base font-bold transition-all duration-300 text-green-600";
+            } else {
+                feedbackMsg.innerHTML = '<i class="fa-regular fa-face-frown mr-1"></i> Rất tiếc, chưa chính xác rồi!';
+                feedbackMsg.className = "h-5 md:h-6 mt-1 md:mt-2 text-sm md:text-base font-bold transition-all duration-300 text-red-500";
+            }
+        }
+
+        function showExplanation(text) {
+            explanationText.textContent = text;
+            explanationBox.classList.remove('hidden');
+            // Cuộn xuống để người dùng thấy khung giải thích trên màn hình nhỏ
+            setTimeout(() => {
+                explanationBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            const hasAnswered = userAnswers[currentQuestionIndex] !== null;
+            nextBtn.disabled = !hasAnswered; 
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextText.textContent = 'Xem Kết Quả';
+            } else {
+                nextText.textContent = 'Câu tiếp';
+            }
+        }
+
+        function navigateQuestion(dir) {
+            if (dir === 1 && currentQuestionIndex === questions.length - 1) { 
+                showResultModal(); 
+                return; 
+            }
+            currentQuestionIndex += dir;
+            if (currentQuestionIndex >= 0 && currentQuestionIndex < questions.length) loadQuestion();
+        }
+
+        function updateProgressBar() {
+            const answered = userAnswers.filter(a => a !== null).length;
+            const percent = Math.round((answered / questions.length) * 100);
+            progressBar.style.width = percent + '%';
+        }
+
+        function updateScore() {
+            const score = userAnswers.filter((a, i) => a === questions[i].correctAnswer).length;
+            currentScoreDisplay.textContent = score;
+        }
+
+        function showResultModal() {
+            const score = userAnswers.filter((a, i) => a === questions[i].correctAnswer).length;
+            document.getElementById('score-display').textContent = `${score}/${questions.length}`;
+            
+            resultModal.classList.remove('opacity-0', 'pointer-events-none');
+            resultModal.querySelector('.bg-white').classList.remove('scale-90');
+            resultModal.querySelector('.bg-white').classList.add('scale-100');
+
+            const modalTitle = document.getElementById('modal-title');
+            if(score > questions.length / 2) {
+                launchConfetti();
+                modalTitle.textContent = "Xuất Sắc!";
+                modalTitle.className = "text-2xl md:text-3xl font-black text-brand-600 mb-2";
+            } else {
+                modalTitle.textContent = "Cố gắng lên nhé!";
+                modalTitle.className = "text-2xl md:text-3xl font-black text-gray-800 mb-2";
+            }
+        }
+
+        function launchConfetti() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 60 };
+
+            function random(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        function resetQuiz() {
+            userAnswers.fill(null); 
+            currentQuestionIndex = 0; 
+            updateScore();
+            
+            resultModal.classList.add('opacity-0', 'pointer-events-none');
+            resultModal.querySelector('.bg-white').classList.add('scale-90');
+            resultModal.querySelector('.bg-white').classList.remove('scale-100');
+            
+            loadQuestion();
+        }
+
+        // Event Listeners
+        document.getElementById('prev-btn').onclick = () => navigateQuestion(-1);
+        document.getElementById('next-btn').onclick = () => navigateQuestion(1);
+        document.getElementById('restart-quiz-btn').onclick = resetQuiz;
+
+        // Start
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
